@@ -41,11 +41,11 @@ pipeline {
       steps {
         script {
           echo "Subiendo la imagen a Docker Hub..."
-          sh "docker push ${IMAGE_NAME}:${BUILD_NUMBER}"
+          sh "docker push ${env.IMAGE_NAME}:${BUILD_NUMBER}"
 
           // Etiquetar como 'latest' también
-          sh "docker tag ${IMAGE_NAME}:${BUILD_NUMBER} ${IMAGE_NAME}:latest"
-          sh "docker push ${IMAGE_NAME}:latest"
+          sh "docker tag ${env.IMAGE_NAME}:${BUILD_NUMBER} ${env.IMAGE_NAME}:latest"
+          sh "docker push ${env.IMAGE_NAME}:latest"
         }
       }
     }
