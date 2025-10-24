@@ -6,6 +6,7 @@ function App() {
   return (
     <>
       <h1 className='text-5xl text-amber-700'>titulo de prueba con jenkins {count}</h1>
+      <button onClick={() => setCount(count + 1)}>Incrementar</button>
     </>
   )
 }
