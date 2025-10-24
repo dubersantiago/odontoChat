@@ -17,6 +17,39 @@ pipeline {
       }
     }
 
+    stage('Construir imagen Docker') {
+      steps {
+        script {
+          echo "Construyendo la imagen Docker..."
+          sh "docker build -t ${env.IMAGE_NAME}:${BUILD_NUMBER} ."
+        }
+      }
+    }
+
+    stage('Login en Docker Hub') {
+      steps {
+        script {
+          echo "Autenticando en Docker Hub..."
+          withCredentials([usernamePassword(credentialsId: "${dockerhub}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+            sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+          }
+        }
+      }
+    }
+
+    stage('Subir imagen a Docker Hub') {
+      steps {
+        script {
+          echo "Subiendo la imagen a Docker Hub..."
+          sh "docker push ${IMAGE_NAME}:${BUILD_NUMBER}"
+
+          // Etiquetar como 'latest' también
+          sh "docker tag ${IMAGE_NAME}:${BUILD_NUMBER} ${IMAGE_NAME}:latest"
+          sh "docker push ${IMAGE_NAME}:latest"
+        }
+      }
+    }
+
     stage('Pruebas') {
       steps {
         sh 'echo "Ejecutando tests..."'
